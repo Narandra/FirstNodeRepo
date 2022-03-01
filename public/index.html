@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title> Home Page </title>
+</head>
+
+<body>
+    <main>
+        <form id="form1">
+            <label for="unameid" id="label1">Please enter your name :</label> <br>
+            <input id="unameid" name="uname" type="text">
+            <button id='subbtn'>Process</button>
+            <!-- <button id="subbtn" type="submit">Submit form</button> -->
+        </form>
+        <div id='div1' class='result'></div>
+        <div id='div2' class='alertBox'></div>
+    </main>
+
+    <!--  <script src="https://unpkg.com/axios/dist/axios.min.js">
+    </script> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+
+        </script>
+
+    <script>
+        console.log('Inside the script')
+        //const axios = require('axios')
+        const inp = document.getElementById("unameid");
+        const result = document.querySelector('.result')
+        const alertMsg = document.querySelector('.alertBox')
+        result.textContent = 'test';
+        const btn = document.querySelector('#subbtn');
+        const fetchPerson = async () => {
+            try {
+                console.log('Inside fetchPerson')
+                const { data } = await axios.get('/api/people')
+                console.log(`Response received ${data}`);
+                const personList = data.map((person) => `<h5>${person.name}</h5>`)
+                console.log(personList)
+                result.innerHTML = personList.join('');
+            }
+            catch (error) {
+                alertMsg.textContent = error
+            }
+        }
+        fetchPerson();
+        
+        btn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            alertMsg.textContent = '';
+            try {
+                const resObj = await axios.post('/api/people', { pname: inp.value });
+                console.log(resObj);
+                const h5 = document.createElement('h5');
+                h5.textContent = resObj.data;
+                result.appendChild(h5);
+            }
+            catch (err) {
+                alertMsg.textContent = err.response.data.msg;
+            }
+            inp.value = '';
+        })
+    </script>
+
+</body>
+
+</html>
